@@ -5,6 +5,7 @@ import org.kirrif.model.Car;
 
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.List;
 
 public class CarService {
@@ -38,4 +39,9 @@ public class CarService {
         }
         return false;
     }
+
+    public static List<String> getCarBodyStyles(Car car){
+        return Arrays.asList(car.getBody().getBody_style().split(",\\s+"));
+    }
+
 }

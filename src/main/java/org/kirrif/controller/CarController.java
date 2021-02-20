@@ -92,7 +92,7 @@ public class CarController {
     public Set<String> getBodyStyles() {
         Set<String> bodyStyles = new HashSet<>();
         for (Car car : cars) {
-            bodyStyles.add(car.getBody().getBody_style());
+            bodyStyles.addAll(CarService.getCarBodyStyles(car));
         }
         return bodyStyles;
     }
