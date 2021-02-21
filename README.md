@@ -2,8 +2,9 @@
 
 1. API расположен на 
     ```
-    http://localhost:8083
+    http://localhost:8080
     ```
+    а также по адресу: [http://34.105.180.71]()
          
 1. Эндпоинт, выдающий массив автомобилей в формате JSON.
     ```
@@ -23,7 +24,10 @@
     
    Пример запроса:
     ```
-    http://localhost:8083/api/cars?country=Germany&segment=E-segment&minEngineDisplacement=4.0&minEngineHorsepower=250&minMaxSpeed=200&search=5&isFull=true
+    http://localhost:8080/api/cars?country=Germany&segment=E-segment&minEngineDisplacement=4.0&minEngineHorsepower=250&minMaxSpeed=200&search=5&isFull=true
+    ```
+    ```
+    http://34.105.180.71/api/cars?country=Germany&segment=E-segment&minEngineDisplacement=4.0&minEngineHorsepower=250&minMaxSpeed=200&search=5&isFull=true
     ```
    Пример ответа:
    ```
@@ -80,5 +84,5 @@
    ```
    Пример запроса:
    ```
-   http://localhost:8083/api/max-speed?brand=BMW
+   http://localhost:8080/api/max-speed?brand=BMW
    ```
