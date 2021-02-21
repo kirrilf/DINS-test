@@ -9,6 +9,7 @@ import java.util.Collection;
 import java.util.List;
 
 public class CarService {
+
     public static Brand getCarBrand(Car car, List<Brand> brands){
         for(Brand brand : brands){
             if(brand.getId().equals(car.getBrand_id())){

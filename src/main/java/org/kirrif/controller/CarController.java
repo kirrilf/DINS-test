@@ -45,7 +45,7 @@ public class CarController {
                                          @RequestParam Optional<String> bodyStyle) throws JsonProcessingException {
 
         List<Car> carsAfterFilters = cars.stream()
-                .filter(car -> !country.isPresent() || country.get().equals(Objects.requireNonNull(CarService.getCarBrand(car, brands)).getCountry()))
+                .filter(car -> !country.isPresent() || country.get().equals(Objects.requireNonNull(CarService.getCarBrand(car, brands)).getCountry()))//если параметр есть, то проверяем условие с этим параметром, если параметра нет, то условие дальше проверяться не будет
                 .filter(car -> !segment.isPresent() || segment.get().equals(car.getSegment()))
                 .filter(car -> !minEngineDisplacement.isPresent() || minEngineDisplacement.get() * 1000 <= car.getEngine().getEngine_displacement())
                 .filter(car -> !minEngineHorsepower.isPresent() || minEngineHorsepower.get() <= car.getEngine().getEngine_horsepower())
