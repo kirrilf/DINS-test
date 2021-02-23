@@ -3,12 +3,12 @@ package org.kirrif.controller;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import org.kirrif.components.Cars;
+import org.kirrif.components.CarsComponent;
 import org.kirrif.dto.CarRespondDto;
-import org.kirrif.model.Brand;
 import org.kirrif.model.Car;
 import org.kirrif.model.Views;
 import org.kirrif.service.CarService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -24,12 +24,16 @@ import java.util.stream.Collectors;
 @RequestMapping(value = "/api")
 public class CarController {
 
-    private final List<Car> cars;
-    private final List<Brand> brands;
+    //private final List<Car> cars;
+    //private final List<Brand> brands;
 
-    public CarController() {
-        this.brands = Cars.getBrands();
-        this.cars = Cars.getCars();
+    private final CarsComponent carsComponent;
+
+    @Autowired
+    public CarController(CarsComponent carsComponent) {
+        //this.brands = carsComponent.getBrands();
+        //this.cars = carsComponent.getCars();
+        this.carsComponent = carsComponent;
     }
 
 
@@ -44,8 +48,8 @@ public class CarController {
                                          @RequestParam Optional<Integer> year,
                                          @RequestParam Optional<String> bodyStyle) throws JsonProcessingException {
 
-        List<Car> carsAfterFilters = cars.stream()
-                .filter(car -> !country.isPresent() || country.get().equals(Objects.requireNonNull(CarService.getCarBrand(car, brands)).getCountry()))//если параметр есть, то проверяем условие с этим параметром, если параметра нет, то условие дальше проверяться не будет
+        List<Car> carsAfterFilters = carsComponent.getCars().stream()
+                .filter(car -> !country.isPresent() || country.get().equals(Objects.requireNonNull(CarService.getCarBrand(car, carsComponent.getBrands())).getCountry()))//если параметр есть, то проверяем условие с этим параметром, если параметра нет, то условие дальше проверяться не будет
                 .filter(car -> !segment.isPresent() || segment.get().equals(car.getSegment()))
                 .filter(car -> !minEngineDisplacement.isPresent() || minEngineDisplacement.get() * 1000 <= car.getEngine().getEngine_displacement())
                 .filter(car -> !minEngineHorsepower.isPresent() || minEngineHorsepower.get() <= car.getEngine().getEngine_horsepower())
@@ -59,7 +63,10 @@ public class CarController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
-        List<CarRespondDto> carRequestDtoList = carsAfterFilters.stream().map(car -> CarRespondDto.fromCar(car, Objects.requireNonNull(CarService.getCarBrand(car, brands)))).collect(Collectors.toList());
+        List<CarRespondDto> carRequestDtoList = carsAfterFilters
+                .stream()
+                .map(car -> CarRespondDto.fromCar(car, Objects.requireNonNull(CarService.getCarBrand(car, carsComponent.getBrands()))))
+                .collect(Collectors.toList());
 
         ObjectMapper mapper = new ObjectMapper();
 
@@ -82,7 +89,7 @@ public class CarController {
     @GetMapping(value = "/fuel-types")
     public Set<String> getFuelTypes() {
         Set<String> fuelTypes = new HashSet<>();
-        for (Car car : cars) {
+        for (Car car : carsComponent.getCars()) {
             fuelTypes.add(car.getEngine().getEngine_type());
         }
         return fuelTypes;
@@ -91,16 +98,18 @@ public class CarController {
     @GetMapping(value = "/body-styles")
     public Set<String> getBodyStyles() {
         Set<String> bodyStyles = new HashSet<>();
-        for (Car car : cars) {
+        for (Car car : carsComponent.getCars()) {
             bodyStyles.addAll(CarService.getCarBodyStyles(car));
         }
         return bodyStyles;
     }
 
+
+
     @GetMapping(value = "/wheel-drives")
     public Set<String> getWheelDrives() {
         Set<String> wheelDrives = new HashSet<>();
-        for (Car car : cars) {
+        for (Car car : carsComponent.getCars()) {
             wheelDrives.add(car.getWheel_drive());
         }
         return wheelDrives;
@@ -109,7 +118,7 @@ public class CarController {
     @GetMapping(value = "/gearboxes")
     public Set<String> getGearboxes() {
         Set<String> gearboxes = new HashSet<>();
-        for (Car car : cars) {
+        for (Car car : carsComponent.getCars()) {
             gearboxes.add(car.getGearbox());
         }
         return gearboxes;
@@ -117,26 +126,26 @@ public class CarController {
 
     @GetMapping(value = "/max-speed")
     public ResponseEntity<Integer> getAverageMaxSpeed(@RequestParam Optional<String> brand,
-                                                     @RequestParam Optional<String> model) {
+                                                      @RequestParam Optional<String> model) {
         if (brand.isPresent() && model.isPresent()) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
         int sumSpeed = 0, count = 0;
         if (brand.isPresent()) {
-            for (Car car : cars) {
-                if (brand.get().equals(Objects.requireNonNull(CarService.getCarBrand(car, brands)).getTitle())) {
+            for (Car car : carsComponent.getCars()) {
+                if (brand.get().equals(Objects.requireNonNull(CarService.getCarBrand(car, carsComponent.getBrands())).getTitle())) {
                     sumSpeed += car.getMax_speed();
                     count++;
                 }
             }
             if (count == 0) {
                 return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-            }else {
-                return new ResponseEntity<>(sumSpeed/count, HttpStatus.OK);
+            } else {
+                return new ResponseEntity<>(sumSpeed / count, HttpStatus.OK);
             }
         }
         if (model.isPresent()) {
-            for (Car car : cars) {
+            for (Car car : carsComponent.getCars()) {
                 if (model.get().equals(car.getModel())) {
                     sumSpeed += car.getMax_speed();
                     count++;
@@ -144,11 +153,10 @@ public class CarController {
             }
             if (count == 0) {
                 return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-            }else {
-                return new ResponseEntity<>(sumSpeed/count, HttpStatus.OK);
+            } else {
+                return new ResponseEntity<>(sumSpeed / count, HttpStatus.OK);
             }
         }
-
 
 
         return new ResponseEntity<>(HttpStatus.BAD_REQUEST);

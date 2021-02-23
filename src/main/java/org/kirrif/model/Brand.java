@@ -7,6 +7,14 @@ public class Brand {
     private String title;
     private String country;
 
+    public Brand(){};
+
+    public Brand(Long id, String title, String country) {
+        this.id = id;
+        this.title = title;
+        this.country = country;
+    }
+
     public Long getId() {
         return id;
     }

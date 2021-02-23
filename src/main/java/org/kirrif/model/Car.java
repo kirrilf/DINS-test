@@ -19,6 +19,36 @@ public class Car {
     private Double acceleration;
     private Integer max_speed;
 
+    public Car(){}
+
+    public Car(Long id,
+               String segment,
+               Long brand_id,
+               String model,
+               String generation,
+               String modification,
+               String year_range,
+               Engine engine,
+               String gearbox,
+               String wheel_drive,
+               Body body,
+               Double acceleration,
+               Integer max_speed) {
+
+        this.id = id;
+        this.segment = segment;
+        this.brand_id = brand_id;
+        this.model = model;
+        this.generation = generation;
+        this.modification = modification;
+        this.year_range = year_range;
+        this.engine = engine;
+        this.gearbox = gearbox;
+        this.wheel_drive = wheel_drive;
+        this.body = body;
+        this.acceleration = acceleration;
+        this.max_speed = max_speed;
+    }
 
     public Long getId() {
         return id;

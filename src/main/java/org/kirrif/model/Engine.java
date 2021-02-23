@@ -6,6 +6,18 @@ public class Engine {
     private Integer engine_displacement;
     private Integer engine_horsepower;
 
+    public Engine(){}
+
+    public Engine(String engine_type,
+                  String engine_cylinders,
+                  Integer engine_displacement,
+                  Integer engine_horsepower) {
+        this.engine_type = engine_type;
+        this.engine_cylinders = engine_cylinders;
+        this.engine_displacement = engine_displacement;
+        this.engine_horsepower = engine_horsepower;
+    }
+
     public String getEngine_type() {
         return engine_type;
     }

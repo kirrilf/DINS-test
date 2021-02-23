@@ -6,6 +6,18 @@ public class Body {
     private Integer body_height;
     private String body_style;
 
+    public Body(){}
+
+    public Body(Integer body_length,
+                Integer body_width,
+                Integer body_height,
+                String body_style) {
+        this.body_length = body_length;
+        this.body_width = body_width;
+        this.body_height = body_height;
+        this.body_style = body_style;
+    }
+
     public Integer getBody_length() {
         return body_length;
     }

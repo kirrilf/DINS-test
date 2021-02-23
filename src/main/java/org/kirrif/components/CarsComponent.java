@@ -21,10 +21,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Component
-public class Cars {
+public class CarsComponent {
 
-    private static List<Car> cars;
-    private static List<Brand> brands;
+    private List<Car> cars;
+    private List<Brand> brands;
 
     @PostConstruct
     private void getCarsByApi() throws Exception {
@@ -53,7 +53,7 @@ public class Cars {
 
     }
 
-    private static CarRequestDto getAllCarCharacteristics(CarRequestDto car, CloseableHttpClient httpClient, Gson gson) throws Exception {
+    private CarRequestDto getAllCarCharacteristics(CarRequestDto car, CloseableHttpClient httpClient, Gson gson) throws Exception {
             String url = "http://localhost:8084/api/v1/cars/";
             HttpGet request = new HttpGet(url+car.getId());
             try (CloseableHttpResponse response = httpClient.execute(request)) {
@@ -81,11 +81,11 @@ public class Cars {
         }
     }
 
-    public static List<Car> getCars(){
+    public List<Car> getCars(){
         return cars;
     }
 
-    public static List<Brand> getBrands(){
+    public List<Brand> getBrands(){
         return brands;
     }
 
