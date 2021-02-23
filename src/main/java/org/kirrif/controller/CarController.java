@@ -95,6 +95,15 @@ public class CarController {
         return fuelTypes;
     }
 
+    @GetMapping(value = "/engine-types")
+    public Set<String> getEngineTypes() {
+        Set<String> engineTypes = new HashSet<>();
+        for (Car car : carsComponent.getCars()) {
+            engineTypes.add(car.getEngine().getEngine_type());
+        }
+        return engineTypes;
+    }
+
     @GetMapping(value = "/body-styles")
     public Set<String> getBodyStyles() {
         Set<String> bodyStyles = new HashSet<>();
@@ -103,6 +112,7 @@ public class CarController {
         }
         return bodyStyles;
     }
+
 
 
 
