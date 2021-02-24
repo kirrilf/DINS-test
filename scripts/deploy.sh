@@ -12,7 +12,7 @@ echo 'Restart server...'
 
 ssh -i ~/.ssh/id_rsa kirrilf@34.105.180.71 << EOF
 
-pgrep java |  | xargs kill -9
+pgrep java | xargs kill -9
 nohup java -jar DINS-test-1.0-SNAPSHOT.jar > log.txt &
 
 EOF
