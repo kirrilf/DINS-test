@@ -1,10 +1,14 @@
 package org.kirrif.service.impl;
 
 import org.kirrif.components.CarsComponent;
+import org.kirrif.dto.CarRequestDto;
+import org.kirrif.dto.CarRespondDto;
+import org.kirrif.dto.CarRespondDtoFull;
 import org.kirrif.model.Brand;
 import org.kirrif.model.Car;
 import org.kirrif.service.CarService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -23,26 +27,38 @@ public class CarServiceImpl implements CarService {
 
 
     @Override
-    public List<Car> carFilter(Optional<String> country,
-                               Optional<String> segment,
-                               Optional<Double> minEngineDisplacement,
-                               Optional<Integer> minEngineHorsepower,
-                               Optional<Integer> minMaxSpeed,
-                               Optional<String> search,
-                               Optional<Integer> year,
-                               Optional<String> bodyStyle) {
+    public List<CarRespondDto> carFilter(Optional<String> country,
+                                         Optional<String> segment,
+                                         Optional<Double> minEngineDisplacement,
+                                         Optional<Integer> minEngineHorsepower,
+                                         Optional<Integer> minMaxSpeed,
+                                         Optional<String> search,
+                                         Optional<Integer> year,
+                                         Optional<String> bodyStyle,
+                                         Optional<Boolean> isFull) {
 
-        return carsComponent.getCars().stream()
-                .filter(car -> !country.isPresent() || country.get().equals(Objects.requireNonNull(getCarBrand(car)).getCountry()))//если параметр есть, то проверяем условие с этим параметром, если параметра нет, то условие дальше проверяться не будет
-                .filter(car -> !segment.isPresent() || segment.get().equals(car.getSegment()))
-                .filter(car -> !minEngineDisplacement.isPresent() || minEngineDisplacement.get() * 1000 <= car.getEngine().getEngine_displacement())
-                .filter(car -> !minEngineHorsepower.isPresent() || minEngineHorsepower.get() <= car.getEngine().getEngine_horsepower())
-                .filter(car -> !minMaxSpeed.isPresent() || minMaxSpeed.get() <= car.getMax_speed())
-                .filter(car -> !search.isPresent() || (car.getModel().contains(search.get()) || car.getModification().contains(search.get()) || car.getGeneration().contains(search.get())))
-                .filter(car -> !bodyStyle.isPresent() || isInThatBodyStyle(car, bodyStyle.get()))
-                .filter(car -> !year.isPresent() || isReleasedThatYear(car, year.get()))
+        List<Car> cars = carsComponent.getCars().stream()
+                .filter(car -> country.isEmpty() || country.get().equals(Objects.requireNonNull(getCarBrand(car)).getCountry()))//если параметр есть, то проверяем условие с этим параметром, если параметра нет, то условие дальше проверяться не будет
+                .filter(car -> segment.isEmpty() || segment.get().equals(car.getSegment()))
+                .filter(car -> minEngineDisplacement.isEmpty() || minEngineDisplacement.get() * 1000 <= car.getEngine().getEngine_displacement())
+                .filter(car -> minEngineHorsepower.isEmpty() || minEngineHorsepower.get() <= car.getEngine().getEngine_horsepower())
+                .filter(car -> minMaxSpeed.isEmpty() || minMaxSpeed.get() <= car.getMax_speed())
+                .filter(car -> search.isEmpty() || (car.getModel().contains(search.get()) || car.getModification().contains(search.get()) || car.getGeneration().contains(search.get())))
+                .filter(car -> bodyStyle.isEmpty() || isInThatBodyStyle(car, bodyStyle.get()))
+                .filter(car -> year.isEmpty() || isReleasedThatYear(car, year.get()))
                 .collect(Collectors.toList());
 
+        if (isFull.orElse(false)) {
+            return cars
+                    .stream()
+                    .map(car -> CarRespondDtoFull.fromCar(car, Objects.requireNonNull(getCarBrand(car))))
+                    .collect(Collectors.toList());
+        }
+
+        return cars
+                .stream()
+                .map(car -> CarRespondDto.fromCar(car, Objects.requireNonNull(getCarBrand(car))))
+                .collect(Collectors.toList());
 
     }
 

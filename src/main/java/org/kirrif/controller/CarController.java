@@ -40,38 +40,19 @@ public class CarController {
                                                       @RequestParam Optional<String> search,
                                                       @RequestParam Optional<Boolean> isFull,
                                                       @RequestParam Optional<Integer> year,
-                                                      @RequestParam Optional<String> bodyStyle){
+                                                      @RequestParam Optional<String> bodyStyle) {
 
-        List<Car> carsAfterFilters = carService.carFilter(country,
-                segment,
-                minEngineDisplacement,
-                minEngineHorsepower,
-                minMaxSpeed,
-                search,
-                year,
-                bodyStyle);
+        List<CarRespondDto> carsAfterFilters = carService.carFilter(country,
+                                                                    segment, minEngineDisplacement,
+                                                                    minEngineHorsepower, minMaxSpeed,
+                                                                    search, year,
+                                                                    bodyStyle, isFull);
 
 
         if (carsAfterFilters.size() == 0) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-
-
-        if (isFull.orElse(false)) {
-            return ResponseEntity
-                    .ok()
-                    .body(carsAfterFilters
-                            .stream()
-                            .map(car -> CarRespondDtoFull.fromCar(car, Objects.requireNonNull(carService.getCarBrand(car))))
-                            .collect(Collectors.toList()));
-        }
-
-        return ResponseEntity
-                .ok()
-                .body(carsAfterFilters
-                        .stream()
-                        .map(car -> CarRespondDto.fromCar(car, Objects.requireNonNull(carService.getCarBrand(car))))
-                        .collect(Collectors.toList()));
+        return ResponseEntity.ok().body(carsAfterFilters);
     }
 
 
