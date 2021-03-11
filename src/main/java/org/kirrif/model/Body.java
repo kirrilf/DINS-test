@@ -1,5 +1,7 @@
 package org.kirrif.model;
 
+import java.util.Objects;
+
 public class Body {
     private Integer body_length;
     private Integer body_width;
@@ -16,6 +18,19 @@ public class Body {
         this.body_width = body_width;
         this.body_height = body_height;
         this.body_style = body_style;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Body body = (Body) o;
+        return Objects.equals(body_length, body.body_length) && Objects.equals(body_width, body.body_width) && Objects.equals(body_height, body.body_height) && Objects.equals(body_style, body.body_style);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(body_length, body_width, body_height, body_style);
     }
 
     public Integer getBody_length() {
